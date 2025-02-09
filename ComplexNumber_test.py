@@ -137,21 +137,30 @@ class Test:
         assert (ComplexNumber(complex(3)) + ComplexNumber("5")) is None
         assert (ComplexNumber([3]) + ComplexNumber(5 + 0j)) is None
 
-    @pytest.mark.skip("tento test chci přeskočit.")
-    def test_addition2(self):
-        basic_calculator = BasicCalculator()
-        result = basic_calculator.add(3, 5)
-        assert result == 8
-        assert basic_calculator.add(-6, -4) == -10
-        assert basic_calculator.add(-3, 4) == 1
-        assert basic_calculator.add(5, -6) == -1
-        assert basic_calculator.add(5, 0) == 5
-        assert round(basic_calculator.add(2.1, 3.2), 5) == 5.3
-        assert round(basic_calculator.add(10, 5.3), 5) == 15.3
-        assert basic_calculator.add("3", "5") is None
-        assert basic_calculator.add("Hello", "World") is None
-        assert basic_calculator.add(3, "5") is None
-        assert basic_calculator.add([3], 5) is None
+    def test_sub_with_variable(self):
+        num1 = ComplexNumber(complex(6, 9))
+        num2 = ComplexNumber(2 + 3j)
+        assert num1 - num2 == 4 + 6j
+        num1.value = 7 + 1j
+        num2.value = 3
+        assert num1 - num2 == 4 + 1j
+        num1.value = 1 + 1j
+        num2.value = round(-3.33344444444444444444444444444444444444, 5)
+        assert num1 - num2 == 4.33343+1j
+        num1.value = "3"
+        num2.value = ["5"]
+        assert (num1 + num2) is None
+        with pytest.raises(ValueError):
+            num1.value = complex("Hello")
+            num2.value = ("Big", "World")
+            assert (num1 + num2) is None
+        num1.value = 3
+        num2.value = "5"
+        assert (num1 + num2) is None
+        num1.value = [3]
+        num2.value = 5 + 0j
+        assert (num1 + num2) is None
+
 
     @pytest.mark.skip("tento test chci přeskočit.")
     def test_subtraction(self):

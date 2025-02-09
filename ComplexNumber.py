@@ -23,6 +23,11 @@ class ComplexNumber:
             return None
         return self.value + other.value
 
+    def __sub__(self, other):
+        if not isinstance(self.value, (int, float, complex)) or not isinstance(other.value, (int, float, complex)):
+            return None
+        return self.value - other.value
+
     @property
     def value(self):
         return self._value
