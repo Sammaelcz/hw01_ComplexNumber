@@ -1,215 +1,163 @@
 import pytest
 from ComplexNumber import ComplexNumber
 
-
 class Test:
 
-    @staticmethod
-    def setup_method():
-        print("setup_method: Tato metoda se spustí jednou na začátku každého testu "
-              "a slouží k nastavení prostředí pro test.")
+    #test_equality
+    @pytest.mark.parametrize(
+        "num1, num2, result",
+        [
+            (2, 2, True),
+            (complex(2, 3), 2 + 3j, True),
+            (1 + 3j, complex(2, 4.43256), False),
+            ("+", complex(), False),
+            ("", {"halo": 231}, False),
+            (-5.4, "", False)
+        ]
+    )
+    def test_equality(self, num1, num2, result):
+        assert (ComplexNumber(num1) == ComplexNumber(num2)) == result
 
-    @staticmethod
-    def teardown_method():
-        print("teardown_method: Tato metoda se spustí na konci každého testu "
-              "a slouží k vyčištění testovacího prostředí.")
+    # test_lt
+    @pytest.mark.parametrize(
+        "num1, num2, result",
+        [
+            (1+3j, 2+3j, True),
+            (complex(3, 0), 2.32131321323134415555235+4.2321424134124141313123123123231244444j, True),
+            (999+4223j, -45475+3j, True),
+            (4+3j, 2+3j, False),
+            ("+3j", 4+3j, None),
+            ("+[3j]", {"halo": 231}, None),
+            ('', {"halo": 231}, None)
+        ]
+    )
+    def test_lesser_than(self, num1, num2, result):
+        assert (ComplexNumber(num1) < ComplexNumber(num2)) == result
 
-    def test_eq_with_variable(self):
-        num1 = ComplexNumber(complex(2, 3))
-        num2 = ComplexNumber(2 + 3j)
-        assert num1 == num2
-        num1.value = 1 + 3j
-        num2.value = complex(2, 4.432242344124232343532313232323232121212122423455343)
-        assert num1 != num2
-        num1 = ComplexNumber("+")
-        num2.value = complex()
-        assert num1 != num2
-        num1 = ComplexNumber()
-        num2 = ComplexNumber({"halo": 231})
-        assert num1 != num2
-        num1.value = -5.4
-        num2.value = ""
-        assert num1 != num2
+    # test_gt
+    @pytest.mark.parametrize(
+        "num1, num2, result",
+        [
+            (2 + 3j, 1 + 3j, True),
+            (2.32131321323134415555235 + 4.2321424134124141313123123123231244444j, complex(3, 0), True),
+            (-45475 + 3j, 999 + 4223j, True),
+            (2 + 3j, 4 + 3j, False),
+            ("+3j", 4 + 3j, None),
+            ("+[3j]", {"halo": 231}, None),
+            ('', {"halo": 231}, None)
+        ]
+    )
+    def test_greater_than(self, num1, num2, result):
+        assert (ComplexNumber(num1) > ComplexNumber(num2)) == result
 
-    def test_eq_without_variable(self):
-        assert ComplexNumber(complex(2, 3)) == ComplexNumber(2 + 3j)
-        assert ComplexNumber(1 + 3j) != ComplexNumber(complex(2, 4.432242344124232343532313232323232121212122423455343))
-        assert ComplexNumber("+") != ComplexNumber(complex())
-        assert ComplexNumber() != ComplexNumber({"halo": 231})
-        assert ComplexNumber(-5.4) != ComplexNumber("")
+    # test_add
+    @pytest.mark.parametrize(
+        "num1, num2, result",
+        [
+            (complex(2, 3), 2 + 3j, 4 + 6j),
+            (1 + 1j, 3, 4 + 1j),
+            (1 + 1j, round(-3.33344444444444444444444444444444444, 5), -2.33344+1j),
+            (complex("3"), "5", None),
+            ("+3j", 4 + 3j, None),
+            ("+[3j]", {"halo": 231}, None),
+            ('', {"halo": 231}, None),
+        ]
+    )
+    def test_addition(self, num1, num2, result):
+        assert (ComplexNumber(num1) + ComplexNumber(num2)) == result
 
-    def test_lt_with_variable(self):
-        num1 = ComplexNumber(1+3j)
-        num2 = ComplexNumber(2+3j)
-        assert num1 < num2
-        num1.value = 3+0j
-        num2 = ComplexNumber(2.32131321323134415555235+4.2321424134124141313123123123231244444j)
-        assert num1 < num2
-        num1.value = 999+4223j
-        num2 = ComplexNumber(-45475+3j)
-        assert num1 < num2
-        num1.value = 4+3j
-        num2.value = 2+3j
-        assert (num1 < num2) is False
-        num1 = ComplexNumber("+3j")
-        num2.value = 4+3j
-        assert (num1 < num2) is None
-        num1.value = "+[3j]"
-        num2 = ComplexNumber({"halo": 231})
-        assert (num1 < num2) is None
-        num1 = ComplexNumber()
-        num2.value = {"halo": 231}
-        assert (num1 < num2) is None
+    # test_sub
+    @pytest.mark.parametrize(
+        "num1, num2, result",
+        [
+            (complex(6, 9), 2 + 3j, 4 + 6j),
+            (7 + 1j, 3, 4 + 1j),
+            (1 + 1j, round(-3.33344444444444444444444444444444444, 5), 4.3334399999999995+1j),
+            (complex("3"), "5", None),
+            ("3", ["5"], None),
+            (3, "5", None),
+            ([3], 5 + 0j, None),
+            ("+3j", 4 + 3j, None),
+            ("+[3j]", {"halo": 231}, None),
+            ('', {"halo": 231}, None),
+        ]
+    )
+    def test_subtract(self, num1, num2, result):
+        assert (ComplexNumber(num1) - ComplexNumber(num2)) == result
 
-    def test_lt_without_variable(self):
-        assert ComplexNumber(1+3j) < ComplexNumber(2+3j)
-        assert ComplexNumber(3+0j) < ComplexNumber(2.32131321323134415555235+4.2321424134124141313123123123231244444j)
-        assert ComplexNumber(999+4223j) < ComplexNumber(-45475+3j)
-        assert (ComplexNumber(4+3j) < ComplexNumber(2+3j)) is False
-        assert (ComplexNumber("+3j") < ComplexNumber(4+3j)) is None
-        assert (ComplexNumber("+[3j]") < ComplexNumber({"halo": 231})) is None
-        assert (ComplexNumber() < ComplexNumber({"halo": 231})) is None
+    # test_mul
+    @pytest.mark.parametrize(
+        "num1, num2, result",
+        [
+            (complex(6, 9), 2 + 3j, -15+36j),
+            (7 + 1j, 3, 21+3j),
+            (1 + 1j, round(-3.33344444444444444444444444444444444, 5), -3.33344-3.33344j),
+            (complex("3"), "5", None),
+            ("3", ["5"], None),
+            (3, "5", None),
+            ([3], 5 + 0j, None),
+            ("+3j", 4 + 3j, None),
+            ("+[3j]", {"halo": 231}, None),
+            ('', {"halo": 231}, None),
+        ]
+    )
+    def test_multiplication(self, num1, num2, result):
+        assert (ComplexNumber(num1) * ComplexNumber(num2)) == result
 
-    def test_gt_with_variable(self):
-        num1 = ComplexNumber(2+3j)
-        num2 = ComplexNumber(1+3j)
-        assert num1 > num2
-        num1 = ComplexNumber(2.32131321323134415555235+4.2321424134124141313123123123231244444j)
-        num2.value = 3+0j
-        assert num1 > num2
-        num1 = ComplexNumber(-45475+3j)
-        num2.value = 999+4223j
-        assert num1 > num2
-        num1.value = 2+3j
-        num2.value = 4+3j
-        assert (num1 > num2) is False
-        num1.value = 4 + 3j
-        num2 = ComplexNumber("+3j")
-        assert (num1 > num2) is None
-        num1 = ComplexNumber({"halo": 231})
-        num2.value = "+[3j]"
-        assert (num1 > num2) is None
-        num1.value = {"halo": 231}
-        num2 = ComplexNumber()
-        assert (num1 > num2) is None
+    # test_truediv
+    @pytest.mark.parametrize(
+        "num1, num2, result",
+        [
+            (complex(6, 9), 2 + 3j, 3+0j),
+            (7 + 1j, 3, 2.3333333333333335+0.3333333333333333j),
+            (1 + 1j, round(-3.33344444444444444444444444444444444, 5), -0.29999040030719015-0.29999040030719015j),
+            (complex("3"), "5", None),
+            ("3", ["5"], None),
+            (3, "5", None),
+            ([3], 5 + 0j, None),
+            ("+3j", 4 + 3j, None),
+            ("+[3j]", {"halo": 231}, None),
+            ('', {"halo": 231}, None),
+            (7 + 1j, 0, None)
+        ]
+    )
+    def test_division(self, num1, num2, result):
+        assert (ComplexNumber(num1) / ComplexNumber(num2)) == result
 
-    def test_gt_without_variable(self):
-        assert ComplexNumber(2+3j) > ComplexNumber(1+3j)
-        assert ComplexNumber(2.32131321323134415555235+4.2321424134124141313123123123231244444j) > ComplexNumber(3+0j)
-        assert ComplexNumber(-45475+3j) > ComplexNumber(999+4223j)
-        assert (ComplexNumber(2+3j) > ComplexNumber(4+3j)) is False
-        assert (ComplexNumber(4+3j) > ComplexNumber("+3j")) is None
-        assert (ComplexNumber({"halo": 231}) > ComplexNumber("+[3j]")) is None
-        assert (ComplexNumber({"halo": 231}) > ComplexNumber()) is None
+    # test_conjugate_value
+    @pytest.mark.parametrize(
+        "num, result",
+        [
+            (complex(2, 3), 2-3j),
+            (1 + 1j, 1-1j),
+            (-2.33344+1j, -2.33344-1j),
+            (complex("3"), 3-0j),
+            ("Hello", None),
+            (complex(3), 3-0j),
+            ([3], None),
+            ({"halo": 231}, None),
+            (-4, -4),
+            (0, 0)
+        ]
+    )
+    def test_conjugation(self, num, result):
+        assert ComplexNumber(num).conjugate_value() == result
 
-    def test_add_with_variable(self):
-        num1 = ComplexNumber(complex(2, 3))
-        num2 = ComplexNumber(2 + 3j)
-        assert num1 + num2 == 4 + 6j
-        num1.value = 1 + 1j
-        num2.value = 3
-        assert num1 + num2 == 4 + 1j
-        num1.value = 1 + 1j
-        num2.value = round(-3.33344444444444444444444444444444444444, 5)
-        assert num1 + num2 == -2.33344+1j
-        num1.value = "3"
-        num2.value = ["5"]
-        assert (num1 + num2) is None
-        with pytest.raises(ValueError):
-            num1.value = complex("Hello")
-            num2.value = ("Big", "World")
-            assert (num1 + num2) is None
-        num1.value = 3
-        num2.value = "5"
-        assert (num1 + num2) is None
-        num1.value = [3]
-        num2.value = 5 + 0j
-        assert (num1 + num2) is None
-
-    def test_add_without_variable(self):
-        assert (ComplexNumber(complex(2, 3)) + ComplexNumber(2 + 3j)) ==  4 + 6j
-        assert (ComplexNumber(1 + 1j) + ComplexNumber(3)) ==  4 + 1j
-        assert (ComplexNumber(1 + 1j) + ComplexNumber(round(-3.33344444444444444444444444444444444, 5))) == -2.33344+1j
-        assert (ComplexNumber(complex(2, 3)) + ComplexNumber(2 + 3j)) == 4 + 6j
-        assert (ComplexNumber(complex("3")) + ComplexNumber("5")) is None
-        with pytest.raises(ValueError):
-            assert (ComplexNumber(complex("Hello")) + ComplexNumber(("Big", "World"))) is None
-        assert (ComplexNumber(complex(3)) + ComplexNumber("5")) is None
-        assert (ComplexNumber([3]) + ComplexNumber(5 + 0j)) is None
-
-    def test_sub_with_variable(self):
-        num1 = ComplexNumber(complex(6, 9))
-        num2 = ComplexNumber(2 + 3j)
-        assert num1 - num2 == 4 + 6j
-        num1.value = 7 + 1j
-        num2.value = 3
-        assert num1 - num2 == 4 + 1j
-        num1.value = 1 + 1j
-        num2.value = round(-3.33344444444444444444444444444444444444, 5)
-        assert num1 - num2 == 4.33343+1j
-        num1.value = "3"
-        num2.value = ["5"]
-        assert (num1 + num2) is None
-        with pytest.raises(ValueError):
-            num1.value = complex("Hello")
-            num2.value = ("Big", "World")
-            assert (num1 + num2) is None
-        num1.value = 3
-        num2.value = "5"
-        assert (num1 + num2) is None
-        num1.value = [3]
-        num2.value = 5 + 0j
-        assert (num1 + num2) is None
-
-
-    @pytest.mark.skip("tento test chci přeskočit.")
-    def test_subtraction(self):
-        basic_calculator = BasicCalculator()
-        result = basic_calculator.subtract(3, 5)
-        assert result == -2
-        assert basic_calculator.subtract(-6, -4) == -2
-        assert basic_calculator.subtract(-3, 4) == -7
-        assert basic_calculator.subtract(5, -6) == 11
-        assert basic_calculator.subtract(5, 0) == 5
-        assert round(basic_calculator.subtract(2.1, 3.2), 5) == -1.1
-        assert round(basic_calculator.subtract(10, 5.3), 5) == 4.7
-        assert basic_calculator.subtract("3", "5") is None
-        assert basic_calculator.subtract("Hello", "World") is None
-        assert basic_calculator.subtract(3, "5") is None
-        assert basic_calculator.subtract([3], 5) is None
-
-    @pytest.mark.skip("tento test chci přeskočit.")
-    def test_multiply(self):
-        basic_calculator = BasicCalculator()
-        result = basic_calculator.multiply(3, 5)
-        assert result == 15
-        assert basic_calculator.multiply(-6, -4) == 24
-        assert basic_calculator.multiply(-3, 4) == -12
-        assert basic_calculator.multiply(5, -6) == -30
-        assert basic_calculator.multiply(5, 0) == 0
-        assert round(basic_calculator.multiply(2.1, 3.2), 5) == 6.72
-        assert round(basic_calculator.multiply(10, 5.3), 5) == 53
-        assert basic_calculator.multiply("3", "5") is None
-        assert basic_calculator.multiply("Hello", "World") is None
-        assert basic_calculator.multiply(3, "5") is None
-        assert basic_calculator.multiply([3], 5) is None
-
-    @pytest.mark.skip("Test dělení chci přeskočit.")
-    def test_divide(self):
-        basic_calculator = BasicCalculator()
-        result = basic_calculator.divide(6, 3)
-        assert result == 2
-        assert basic_calculator.divide(-6, -2) == 3
-        assert basic_calculator.divide(-3, 3) == -1
-        assert basic_calculator.divide(6, -6) == -1
-        assert round(basic_calculator.divide(2.1, 3.2), 5) == 0.65625
-        assert round(basic_calculator.divide(11.25, 2.25), 5) == 5
-        assert basic_calculator.divide("3", "5") is None
-        assert basic_calculator.divide("Hello", "World") is None
-        assert basic_calculator.divide(3, "5") is None
-        assert basic_calculator.divide([3], 5) is None
-
-        #assert basic_calculator.divide(5, 0) == 5
-        # testování výjimky
-        with pytest.raises(ZeroDivisionError):
-            assert basic_calculator.divide(5, 0)
+    # test_absolute_value
+    @pytest.mark.parametrize(
+        "num, result",
+        [
+            (complex(2, 3), 3.605551275463989),
+            (1 + 1j, 1.4142135623730951),
+            (-2.33344 + 1j, 2.538689077772227),
+            (complex("3"), 3-0j),
+            ("Hello", None),
+            (complex(3), 3 - 0j),
+            ([3], None),
+            ({"halo": 231}, None),
+            (-4, 4),
+            (0, 0)
+        ]
+    )
+    def test_absolute_value(self, num, result):
+        assert ComplexNumber(num).absolute_value() == result
